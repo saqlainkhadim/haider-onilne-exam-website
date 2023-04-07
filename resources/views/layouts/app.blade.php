@@ -87,6 +87,9 @@
    <script src="{{ asset('assets/libraries/toast/js/simple-notify.min.js')}}"></script>
    @include('includes.messages')
     @yield('scripts')
+        <!-- SELECT2 library -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 </body>
 

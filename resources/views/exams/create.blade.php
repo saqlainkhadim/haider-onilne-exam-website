@@ -81,7 +81,7 @@
                     },
                     // "sections[]":{
                     //   required:function(){
-                    //     return $("#time_limit").val()!="" || $("#questions").val()!="" || $("#files").val()!=""; 
+                    //     return $("#time_limit").val()!="" || $("#questions").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   maxlength:100,
@@ -89,21 +89,21 @@
                     // },
                     // "questions[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#time_limit").val()!="" || $("#files").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#time_limit").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   range: [1, 100]
                     // },
                     // "time_limit[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#files").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   range: [1, 320]
                     // },
                     // "files[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#time_limit").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#time_limit").val()!="";
 
                     //   },
                     //   extension: "pdf"
@@ -148,6 +148,46 @@
                 <label for="questions-${section_row}" class="form-label">Number of Questions</label>
                 <input type="text" class="form-control" name="questions[${section_row}]" id="questions-${section_row}" >
               </div>
+
+
+              <div class="col-12">
+                <label for="textbox-${section_row}" class="form-label">Number of Free TextBox Questions
+                    <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free TextBox Questions out of Total questions "></i>
+
+                    </label>
+                <input type="text" class="form-control" name="textbox[${section_row}]" id="textbox-${section_row}" >
+              </div>
+
+
+                <div class="col-12">
+                    <label for="question-types-${section_row}" class="form-label" tittle>
+                        Question Types <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                    </label>
+                    <select class="form-control" name="question-types[${section_row}]" value="" id="question-types-${section_row}" required>
+                        <option value="">Choose</option>
+                        <option>Same Pattern</option>
+                        <option>Alertanative Pattern</option>
+                    </select>
+                </div>
+
+
+                <div class="col-12">
+                    <label for="option_types-${section_row}" class="form-label" tittle>
+                        Question Option <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                    </label>
+                    <select class="form-control" name="option_types[${section_row}]" value="" id="option_types-${section_row}" required multiple>
+                        <option value="">Select Option</option>
+                        <option value="ABCD">ABCD</option>
+                        <option value="EFGH">EFGH</option>
+                        <option value="ABCDE">ABCDE</option>
+                        <option value="FGHJ">FGHJ </option>
+                        <option value="FGHJK">FGHJK</option>
+                    </select>
+                </div>
+
+
+
+
               <div class="col-12">
                 <label for="breaks-${section_row}" class="form-label">Break Duration (In Minutes)</label>
                 <input type="text" class="form-control" name="breaks[${section_row}]" id="breaks-${section_row}" >
@@ -160,7 +200,13 @@
      `;
             $(html).insertBefore($("#button-area"));
 
-            // add rules 
+            selector="#option_types-"+section_row;
+            $(document).ready(function() {
+                $(selector).select2({
+                    maximumSelectionLength: 2
+                });
+            });
+            // add rules
             $('input[name="sections[' + section_row + ']"]').rules("add", { // <- apply rule to new field
                 required: true,
                 maxlength: 100,
@@ -185,5 +231,39 @@
 
             section_row++;
         }
+        $(document).ready(function() {
+            $('[id^="question-types-"]').change(function (e) {
+
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("question-types-", "");
+                selector="#option_types-"+section_row;
+                len=2;
+
+                if( $(this).val() == "Same Pattern"){
+                    len=1;
+                }
+
+                $(document).ready(function() {
+                    $(selector).select2({
+                        maximumSelectionLength: len
+                    });
+                    $(selector).val([]).trigger("change");
+                });
+
+            });
+
+             $('[id^="textbox-"]').keyup(function (e) {
+
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("textbox-", "");
+                selector="#questions-"+section_row;
+                if( $(this).val() > $(selector).val()){
+                    $(this).val($(selector).val());
+                }
+
+            });
+
+
+        });
     </script>
 @endsection
