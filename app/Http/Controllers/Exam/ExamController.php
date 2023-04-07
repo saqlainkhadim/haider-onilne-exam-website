@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers\Exam;
 
-use App\Http\Controllers\Controller;
+use Exception;
+use DataTables;
+use Carbon\Carbon;
 use App\Models\Exam;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use App\Http\Services\UploadFile;
-use App\Jobs\CreateExamQuestions;
-use App\Jobs\SendEmailTutorAndAdmins;
+use App\Models\User;
 use App\Models\ExamFile;
+use App\Models\Question;
 use App\Models\ExamResult;
-use App\Models\ExamResultDetail;
 use App\Models\ExamSection;
 use App\Models\ExamStudent;
-use App\Models\Question;
-use App\Models\User;
-use Carbon\Carbon;
-use DataTables;
-use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Else_;
+use App\Models\ExamResultDetail;
+use App\Http\Services\UploadFile;
+use App\Jobs\CreateExamQuestions;
+use App\Models\ExamSectionOption;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Jobs\SendEmailTutorAndAdmins;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
-use PhpParser\Node\Stmt\Else_;
-use Illuminate\Support\Str;
 
 class ExamController extends Controller
 {
@@ -108,12 +109,28 @@ class ExamController extends Controller
                 'time' => $request->time_limit[$key],
                 'break_duration' => $request->breaks[$key],
                 'file' => $fileName,
+                'question_type' => $request->question_types[$key],
+                'free_textboxes' => $request->free_textbox[$key],
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ];
+
             $ex_section = ExamSection::create($exam_sections);
+
+            foreach($request->option_types as $option_type){
+                ExamSectionOption::create(
+                    [
+                        'exam_section_id' => $ex_section->id,
+                        'option' => $option_type,
+                    ]
+                );
+            }
+
             dispatch(new CreateExamQuestions(['exam_id' => ($exam->id), 'section_id' => $ex_section->id, 'total_questions' => $request->questions[$key]]));
         }
+
+
+        
         Session::flash('success_message', 'Exam added successfully!');
         return redirect()->back();
     }

@@ -151,11 +151,11 @@
 
 
               <div class="col-12">
-                <label for="textbox-${section_row}" class="form-label">Number of Free TextBox Questions
-                    <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free TextBox Questions out of Total questions "></i>
+                <label for="free-textbox-${section_row}" class="form-label">Number of Free TextBox Questions
+                    <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free free-textbox Questions out of Total questions "></i>
 
                     </label>
-                <input type="text" class="form-control" name="textbox[${section_row}]" id="textbox-${section_row}" >
+                <input type="text" class="form-control" name="free_textbox[${section_row}]" id="free-textbox-${section_row}" >
               </div>
 
 
@@ -163,7 +163,7 @@
                     <label for="question-types-${section_row}" class="form-label" tittle>
                         Question Types <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
                     </label>
-                    <select class="form-control" name="question-types[${section_row}]" value="" id="question-types-${section_row}" required>
+                    <select class="form-control" name="question_types[${section_row}]" value="" id="question-types-${section_row}" required>
                         <option value="">Choose</option>
                         <option>Same Pattern</option>
                         <option>Alertanative Pattern</option>
@@ -252,10 +252,10 @@
 
             });
 
-             $('[id^="textbox-"]').keyup(function (e) {
+             $('[id^="free-textbox-"]').keyup(function (e) {
 
                 let e_id = $(this).attr('id');
-                section_row = e_id.replace("textbox-", "");
+                section_row = e_id.replace("free-textbox-", "");
                 selector="#questions-"+section_row;
                 if( $(this).val() > $(selector).val()){
                     $(this).val($(selector).val());
