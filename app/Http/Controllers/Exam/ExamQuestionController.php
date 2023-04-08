@@ -15,13 +15,13 @@ class ExamQuestionController extends Controller
     //
     public function edit($exam_id, $section_id)
     {
-        $data['questions'] = $questions = Question::with('options')->where('exam_id', decode($exam_id))->where('section_id', decode($section_id))->get();
+        $data['section'] = ExamSection::with('exam')->where('id', decode($section_id))->first();
+        $data['questions'] = $questions = Question::with('options')->where('exam_id', decode($exam_id))->where('section_id', decode($section_id))->limit( $data['section']->questions )->get();
         if ($questions->count() == 0) {
             Session::flash('error_message', 'No Questions found for this section.');
             return redirect()->back();
         }
-        //
-        $data['section'] = ExamSection::with('exam')->where('id', decode($section_id))->first();
+        
         return view('exams.questions.edit', $data);
     }
 

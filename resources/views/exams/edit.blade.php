@@ -35,9 +35,10 @@
                                 @foreach ($exam->sections as $key => $section)
                                     @php
                                         $section_row = $key + 1;
+                                        $options = $section->options->pluck('option')->toArray();
                                     @endphp
                                     <input type="hidden" name="section_id[{{ $section_row }}]"
-                                        value="{{ encode($section->id) }}" />
+                                        value="{{ $section->id }}" />
                                     <input type="hidden" name="old_file[{{ encode($section->id) }}]"
                                         value="{{ $section->file }}" />
                                     <div class="col-12 text-end">
@@ -46,30 +47,66 @@
                                             Edit Questions Type</a>
                                     </div>
                                     <div class="col-12">
-                                        <label for="section-${section_row}" class="form-label">Section Name</label>
+                                        <label for="section-{{$section_row}}" class="form-label">Section Name</label>
                                         <input type="text" class="form-control" name="sections[{{ $section_row }}]"
-                                            value="{{ $section->section_name }}" id="section-${section_row}">
+                                            value="{{ $section->section_name }}" id="section-{{$section_row}}">
                                     </div>
                                     <div class="col-12">
-                                        <label for="time_limit-${section_row}" class="form-label">Time Limit (In
+                                        <label for="time_limit-{{$section_row}}" class="form-label">Time Limit (In
                                             Minutes)</label>
-                                        <input type="text" class="form-control" name="time_limit[{{ $section_row }}]"
-                                            value="{{ $section->time }}" id="time_limit-${section_row}">
+                                        <input type="number" class="form-control" name="time_limit[{{ $section_row }}]"
+                                            value="{{ $section->time }}" id="time_limit-{{$section_row}}">
                                     </div>
                                     <div class="col-12">
-                                        <label for="questions-${section_row}" class="form-label">Number of Questions</label>
+                                        <label for="questions-{{$section_row}}" class="form-label">Number of Questions</label>
                                         <input type="text" class="form-control" name="questions[{{ $section_row }}]"
-                                            value="{{ $section->questions }}" id="questions-${section_row}">
+                                            value="{{ $section->questions }}" id="questions-{{$section_row}}">
                                     </div>
+
                                     <div class="col-12">
-                                        <label for="breaks-${section_row}" class="form-label">Break Duration</label>
+                                        <label for="free-textbox-{{$section_row}}" class="form-label">Number of Free TextBox Questions
+                                            <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free free-textbox Questions out of Total questions "></i>
+
+                                            </label>
+                                        <input type="number" value="{{$section->free_textboxes}}" class="form-control" name="free_textbox[{{$section_row}}]" id="free-textbox-{{$section_row}}" >
+                                    </div>
+
+
+                                    <div class="col-12">
+                                        <label for="question-types-{{$section_row}}" class="form-label" tittle>
+                                            Question Types <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                                        </label>
+                                        <select class="form-control" name="question_types[{{$section_row}}]" value="" id="question-types-{{$section_row}}" required>
+                                            <option value="">Choose</option>
+                                            <option {{ $section->question_type == "Same Pattern" ?'selected':''}}>Same Pattern</option>
+                                            <option {{ $section->question_type == "Alertanative Pattern" ?'selected':''}}>Alertanative Pattern</option>
+                                        </select>
+                                    </div>
+
+
+                                    <div class="col-12">
+                                        <label for="option_types-{{$section_row}}" class="form-label" tittle>
+                                            Question Option <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                                        </label>
+                                        <select class="form-control js-example-basic-single"  name="option_types[{{$section_row}}][]" value="" id="option_types-{{$section_row}}" required multiple>
+                                            <option value="">Select Option</option>
+                                            <option value="ABCD"  {{in_array('ABCD',$options) ?'selected':''}}>ABCD</option>
+                                            <option value="EFGH"  {{in_array('EFGH',$options) ?'selected':''}}>EFGH</option>
+                                            <option value="ABCDE"  {{in_array('ABCDE',$options) ?'selected':''}}>ABCDE</option>
+                                            <option value="FGHJ"  {{in_array('FGHJ',$options) ?'selected':''}}>FGHJ </option>
+                                            <option value="FGHJK"  {{in_array('FGHJK',$options) ?'selected':''}}>FGHJK</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="breaks-{{$section_row}}" class="form-label">Break Duration</label>
                                         <input type="text" class="form-control" name="breaks[{{ $section_row }}]"
-                                            value="{{ $section->break_duration }}" id="breaks-${section_row}">
+                                            value="{{ $section->break_duration }}" id="breaks-{{$section_row}}">
                                     </div>
                                     <div class="col-12">
-                                        <label for="files-${section_row}" class="form-label">Upload PDF File</label>
+                                        <label for="files-{{$section_row}}" class="form-label">Upload PDF File</label>
                                         <input type="file" class="form-control" name="files[{{ encode($section->id) }}]"
-                                            id="files-${section_row}" accept="application/pdf" />
+                                            id="files-{{$section_row}}" accept="application/pdf" />
                                     </div>
                                     <div class="col-12">
                                         <div class="alert alert-success">
@@ -115,6 +152,8 @@
         // 	}
         // });
         var section_row = "{{ $exam->sections->count() + 1 }}";
+
+
         $(function() {
 
             $("form[name='create_exam_form']").validate({
@@ -133,7 +172,7 @@
 
                     // "sections[]":{
                     //   required:function(){
-                    //     return $("#time_limit").val()!="" || $("#questions").val()!="" || $("#files").val()!=""; 
+                    //     return $("#time_limit").val()!="" || $("#questions").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   maxlength:100,
@@ -141,21 +180,21 @@
                     // },
                     // "questions[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#time_limit").val()!="" || $("#files").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#time_limit").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   range: [1, 100]
                     // },
                     // "time_limit[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#files").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#files").val()!="";
 
                     //   },
                     //   range: [1, 320]
                     // },
                     // "files[]": {
                     //   required:function(){
-                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#time_limit").val()!=""; 
+                    //     return $("#sections").val()!="" || $("#questions").val()!="" || $("#time_limit").val()!="";
 
                     //   },
                     //   extension: "pdf"
@@ -187,6 +226,8 @@
         });
 
         function showSection() {
+            console.log(section_row);
+        debugger
             const html = `
              <div class="col-12">
                 <label for="section-${section_row}" class="form-label">Section Name</label>
@@ -200,6 +241,47 @@
                 <label for="questions-${section_row}" class="form-label">Number of Questions</label>
                 <input type="text" class="form-control" name="questions[${section_row}]" id="questions-${section_row}" >
               </div>
+
+
+
+              <d<div class="col-12">
+                <label for="free-textbox-${section_row}" class="form-label">Number of Free TextBox Questions
+                    <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free free-textbox Questions out of Total questions "></i>
+
+                    </label>
+                <input type="number" class="form-control" name="free_textbox[${section_row}]" id="free-textbox-${section_row}" >
+              </div>
+
+
+                <div class="col-12">
+                    <label for="question-types-${section_row}" class="form-label" tittle>
+                        Question Types <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                    </label>
+                    <select class="form-control" name="question_types[${section_row}]" value="" id="question-types-${section_row}" required>
+                        <option value="">Choose</option>
+                        <option>Same Pattern</option>
+                        <option>Alertanative Pattern</option>
+                    </select>
+                </div>
+
+
+                <div class="col-12">
+                    <label for="option_types-${section_row}" class="form-label" tittle>
+                        Question Option <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
+                    </label>
+                    <select class="form-control" name="option_types[${section_row}][]" value="" id="option_types-${section_row}" required multiple>
+                        <option value="">Select Option</option>
+                        <option value="ABCD">ABCD</option>
+                        <option value="EFGH">EFGH</option>
+                        <option value="ABCDE">ABCDE</option>
+                        <option value="FGHJ">FGHJ </option>
+                        <option value="FGHJK">FGHJK</option>
+                    </select>
+                </div>
+
+
+
+
               <div class="col-12">
                 <label for="files-${section_row}" class="form-label">Upload PDF File</label>
                 <input type="file" class="form-control" name="files[${section_row}]" id="files-${section_row}" accept="application/pdf"  />
@@ -208,7 +290,16 @@
      `;
             $(html).insertBefore($("#button-area"));
 
-            // add rules 
+            selector="#option_types-"+section_row;
+            console.log(selector);
+            $(document).ready(function() {
+                $(selector).select2({
+                    maximumSelectionLength: 2
+                });
+            });
+
+
+            // add rules
             $('input[name="sections[' + section_row + ']"]').rules("add", { // <- apply rule to new field
                 required: true,
                 maxlength: 100,
@@ -229,5 +320,50 @@
 
             section_row++;
         }
+
+        $(document).ready(function() {
+            $(document).on('change', '[id^="question-types-"]', function(e) {
+
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("question-types-", "");
+                selector="#option_types-"+section_row;
+                len=2;
+
+                if( $(this).val() == "Same Pattern"){
+                    len=1;
+                }
+                $(document).ready(function() {
+                    $(selector).select2({
+                        maximumSelectionLength: len
+                    });
+                    $(selector).val([]).trigger("change");
+                });
+
+            });
+
+            $(document).on('keyup', '[id^="free-textbox-"]', function(e) {
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("free-textbox-", "");
+
+                selector="#questions-"+section_row;
+                if( parseInt($(this).val()) > parseInt($(selector).val() ){
+                    $(this).val($(selector).val());
+                }
+
+            });
+
+            $(document).on('keyup', '[id^="questions-"]', function(e) {
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("questions-", "");
+
+                selector="#free-textbox-"+section_row;
+                if( parseInt($(this).val()) < parseInt($(selector).val())){
+                    $(selector).val($(this).val());
+                }
+
+            });
+
+
+        });
     </script>
 @endsection

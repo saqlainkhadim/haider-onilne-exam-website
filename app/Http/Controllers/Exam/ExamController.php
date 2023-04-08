@@ -71,7 +71,7 @@ class ExamController extends Controller
     }
     public function edit($id)
     {
-        $data['exam']  = Exam::with('sections')->findOrFail(decode($id));
+        $data['exam']  = Exam::with(['sections.options' ])->findOrFail(decode($id));
         $data['tutors']  = $this->getTutors();
         return view('exams.edit', $data);
     }
@@ -176,11 +176,18 @@ class ExamController extends Controller
                     'time' => $request->time_limit[$key],
                     'break_duration' => $request->breaks[$key],
                     'file' => $fileName,
+                    'question_type' => $request->question_types[$key],
+                    'free_textboxes' => $request->free_textbox[$key],
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
                 $ex_section = ExamSection::create($exam_sections);
-                dispatch(new CreateExamQuestions(['exam_id' => $exam->id, 'section_id' => $ex_section->id, 'total_questions' => $request->questions[$key]]));
+                dispatch(new CreateExamQuestions(['exam_id' => $exam->id, 'section_id' => $ex_section->id, 'total_questions' => $request->questions[$key],
+                'free_textboxes' => $request->free_textbox[$key],
+                'question_type' => $request->question_types[$key],
+                'option_types' => $request->option_types[$key] ,
+
+                ]));
             } else {
                 $file = isset($files[$section_id]) ? $files[$section_id] : null;
                 $exam_sections = [
@@ -204,6 +211,12 @@ class ExamController extends Controller
                     }
                 }
                 ExamSection::whereId(decode($section_id))->update($exam_sections);
+                dispatch(new CreateExamQuestions(['exam_id' => $exam->id, 'section_id' => $section_id, 'total_questions' => $request->questions[$key],
+                'free_textboxes' => $request->free_textbox[$key],
+                'question_type' => $request->question_types[$key],
+                'option_types' => $request->option_types[$key] ,
+
+                ]));
             }
         }
 

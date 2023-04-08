@@ -39,6 +39,7 @@ class CreateExamQuestions implements ShouldQueue
         $exam_id  = $this->details['exam_id'];
         $section_id  = $this->details['section_id'];
 
+        Question::where('exam_id',$exam_id)->delete();
         $total_questions = $this->details['total_questions'];
         $free_textboxes = $this->details['free_textboxes'];
         $question_types = $this->details['question_type'];
