@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('option');
             $table->unsignedBigInteger('exam_section_id');
-            $table->foreign('exam_section_id')->references('id')->on('exam_sections');
+            $table->foreign('exam_section_id')->references('id')->on('exam_sections')->onDelete('cascade');
             $table->timestamps();
         });
     }

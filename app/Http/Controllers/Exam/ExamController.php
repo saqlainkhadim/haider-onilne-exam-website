@@ -118,7 +118,7 @@ class ExamController extends Controller
 
             $ex_section = ExamSection::create($exam_sections);
 
-            foreach($request->option_types as $option_type){
+            foreach($request->option_types[$key] as $option_type){
                 ExamSectionOption::create(
                     [
                         'exam_section_id' => $ex_section->id,
@@ -127,7 +127,15 @@ class ExamController extends Controller
                 );
             }
 
-            dispatch(new CreateExamQuestions(['exam_id' => ($exam->id), 'section_id' => $ex_section->id, 'total_questions' => $request->questions[$key]]));
+
+
+
+            dispatch(new CreateExamQuestions(['exam_id' => ($exam->id), 'section_id' => $ex_section->id, 'total_questions' => $request->questions[$key],
+            'free_textboxes' => $request->free_textbox[$key],
+            'question_type' => $request->question_types[$key],
+            'option_types' => $request->option_types[$key] ,
+
+                ]));
         }
 
 

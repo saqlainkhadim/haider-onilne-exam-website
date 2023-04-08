@@ -175,7 +175,7 @@
                     <label for="option_types-${section_row}" class="form-label" tittle>
                         Question Option <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Information"></i>
                     </label>
-                    <select class="form-control" name="option_types[${section_row}]" value="" id="option_types-${section_row}" required multiple>
+                    <select class="form-control" name="option_types[${section_row}][]" value="" id="option_types-${section_row}" required multiple>
                         <option value="">Select Option</option>
                         <option value="ABCD">ABCD</option>
                         <option value="EFGH">EFGH</option>
