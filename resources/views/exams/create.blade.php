@@ -142,11 +142,11 @@
               </div>
              <div class="col-12">
                 <label for="time_limit-${section_row}" class="form-label">Time Limit (In Minutes)</label>
-                <input type="text" class="form-control" name="time_limit[${section_row}]" id="time_limit-${section_row}" >
+                <input type="number" class="form-control" name="time_limit[${section_row}]" id="time_limit-${section_row}" >
               </div>
               <div class="col-12">
                 <label for="questions-${section_row}" class="form-label">Number of Questions</label>
-                <input type="text" class="form-control" name="questions[${section_row}]" id="questions-${section_row}" >
+                <input type="number" class="form-control" name="questions[${section_row}]" id="questions-${section_row}" >
               </div>
 
 
@@ -155,7 +155,7 @@
                     <i class="bi bi-info-circle"   data-toggle="tooltip" data-html="true" title="Number of Free free-textbox Questions out of Total questions "></i>
 
                     </label>
-                <input type="text" class="form-control" name="free_textbox[${section_row}]" id="free-textbox-${section_row}" >
+                <input type="number" class="form-control" name="free_textbox[${section_row}]" id="free-textbox-${section_row}" >
               </div>
 
 
@@ -190,7 +190,7 @@
 
               <div class="col-12">
                 <label for="breaks-${section_row}" class="form-label">Break Duration (In Minutes)</label>
-                <input type="text" class="form-control" name="breaks[${section_row}]" id="breaks-${section_row}" >
+                <input type="number" class="form-control" name="breaks[${section_row}]" id="breaks-${section_row}" >
               </div>
               <div class="col-12">
                 <label for="files-${section_row}" class="form-label">Upload PDF File</label>
@@ -232,7 +232,7 @@
             section_row++;
         }
         $(document).ready(function() {
-            $('[id^="question-types-"]').change(function (e) {
+            $(document).on('change', '[id^="question-types-"]', function(e) {
 
                 let e_id = $(this).attr('id');
                 section_row = e_id.replace("question-types-", "");
@@ -242,7 +242,6 @@
                 if( $(this).val() == "Same Pattern"){
                     len=1;
                 }
-
                 $(document).ready(function() {
                     $(selector).select2({
                         maximumSelectionLength: len
@@ -252,13 +251,26 @@
 
             });
 
-             $('[id^="free-textbox-"]').keyup(function (e) {
-
+            $(document).on('change', '[id^="free-textbox-"]', function(e) {
                 let e_id = $(this).attr('id');
                 section_row = e_id.replace("free-textbox-", "");
+
                 selector="#questions-"+section_row;
+                console.log(selector );
                 if( $(this).val() > $(selector).val()){
                     $(this).val($(selector).val());
+                }
+
+            });
+
+            $(document).on('change', '[id^="questions-"]', function(e) {
+                let e_id = $(this).attr('id');
+                section_row = e_id.replace("questions-", "");
+
+                selector="#free-textbox-"+section_row;
+                console.log(selector );
+                if( $(this).val() < $(selector).val()){
+                    $(selector).val($(this).val());
                 }
 
             });

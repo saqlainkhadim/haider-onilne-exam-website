@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendEmailTutorAndAdmins;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ExamController extends Controller
 {
@@ -130,7 +131,7 @@ class ExamController extends Controller
         }
 
 
-        
+
         Session::flash('success_message', 'Exam added successfully!');
         return redirect()->back();
     }
